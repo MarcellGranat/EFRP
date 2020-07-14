@@ -56,7 +56,7 @@ theme_set(theme_light() + theme(
 load("Exercise-2.RData") # datas from Bankdata.xlsx
 ```
 
-## Expoler the datas
+## Explorer the datas
 
 ``` r
 Bankdata %>% pivot_longer(-1) %>% 
@@ -72,7 +72,7 @@ Bankdata %>% pivot_longer(-1) %>%
 ``` r
 Bankdata %>% select(-1) %>% 
   apply(2, function(x) { # # of differences required for stationarity to each series
-    forecast::ndiffs(x, test = "adf", alpha = 0.01, type = "level")
+    forecast::ndiffs(x, test = "adf", alpha = 0.05, type = "level")
   })
 ```
 
@@ -94,9 +94,9 @@ Bankdata %>% select(-1) %>%
 ![](Exercise-2_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
-cointegration_tests <- function(df, alpha) { # test cointegrity for all combination in a df
+cointegration_tests <- function(df, test, type, alpha) { # test cointegrity for all combination in a df
   ndiff_df <- df %>% select(-1) %>% apply(2, function(x) { # # of differences required for stationarity to each series
-    forecast::ndiffs(x, test = "adf", alpha = alpha, type = "level")
+    forecast::ndiffs(x, test = test, alpha = alpha, type = type)
   })
 
   v <- df %>% select(-1) %>% # remove year ---> IT MUST BE IN THE INPUT DF !
@@ -115,7 +115,7 @@ cointegration_tests <- function(df, alpha) { # test cointegrity for all combinat
     if (df2[i, 3] != 0) {
       if (lm(y ~ x, data = rename_all(data.frame(y = df[df2[i, 1]], x = df[df2[i, 2]]), funs(c("y", "x")))) %>%
         broom::augment() %>% .$.resid %>%
-        forecast::ndiffs(test = "kpss", alpha = alpha, type = "level") == df2[i, 3] - 1) {
+        forecast::ndiffs(test = test, alpha = alpha, type = type) == df2[i, 3] - 1) {
         v[i] <- 2 # 2 ---> series are cointegrated
       } else {
         v[i] <- 1 # 1 ---> not cointegrated, but test is commitable
@@ -133,7 +133,7 @@ cointegration_tests <- function(df, alpha) { # test cointegrity for all combinat
 ```
 
 ``` r
-cointegration_tests(Bankdata, 0.01) %>% 
+cointegration_tests(df = Bankdata, test= "adf", type = "level", 0.05) %>% 
   mutate(
     cointegration = case_when(
       cointegration == 0 ~ "Not commitable",
@@ -146,8 +146,12 @@ cointegration_tests(Bankdata, 0.01) %>%
   geom_tile(aes(x = x, y = y, fill = cointegration), color = "black") +
   scale_fill_grey() +
   theme(
-    axis.text.y = element_text(size = 8),
-    axis.text.x = element_text(angle = 90, vjust = 0.45, size = 8),
+    axis.text.x = element_text(angle = 90, vjust = 0.45),
+  ) + labs(
+    y = "Dependent variable in the OLS",
+    x = "Independent variable in the OLS",
+    title = "Results of Engle-Granger method",
+    caption = "ADF-test (without trend and constant)"
   )
 ```
 
