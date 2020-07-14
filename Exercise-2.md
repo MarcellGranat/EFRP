@@ -1,0 +1,154 @@
+Exercise-2
+================
+Granát Marcell
+2020 07 14
+
+## Feladat leírása
+
+Az Excel a következő információkat tartalmazza:
+
+6 amerikai bank (JPMorgan Chase, Bank of America, Citigroup, Wells
+Fargo, Goldman Sachs, Morgan Stanley) close open high low ask és bid
+árfolyamait. 2003.12.10 és 2019.06.25 között. Az információk a
+Bloombergről lettek letöltve. Számodra elegendő lesz a close árakat
+használni ez elemzés során\!
+
+A csatolt Excel adatok alapján a következő feladatokat végezd el:
+
+1)  In-sample elemzés: Vizsgáld meg (a teljes mintán) a kointegrációs
+    kapcsolatokat páronként az Engle-Granger teszttel illetve a Johansen
+    teszttel (egyszerre az összes idősorron végezd el a tesztet).
+
+Interpretáld a kapott eredményeket valamilyen módon (ábra, táblázat …).
+
+2)  Out-of-sample elemzés: Végezz el egy görgetett ablakos kointegrációs
+    tesztet (tesztsorozatot) három idősoron (JPMorgan Chase, Bank of
+    America, Citigroup) mind az Engle-Granger módszerrel (páronként),
+    mind a Johansen teszttel. Interpretáld a kapott eredményeket
+    valamilyen módon (ábra, táblázat …).
+
+A görgetett ablak mérete legyen 250 nap. Minden egyes lépésnél
+frissüljön a teszthez használt modell\! Ha szükséges nézz utána hogy a
+görgetett ablak kifejezés (rolling window) milyen modellezési eljárást
+takar\!
+
+3)  Pár mondatban foglald össze hogy az előző egyszerű elemzésnek milyen
+    kapcsolata van az általad korábban feldolgozott 2 cikkel.
+
+4)  Pár mondatban foglald össze hogy milyen egyéb elemzést lehetne még
+    ezeken az adatokon elvégezni (amelyek ugyancsak kapcsolódnak ezekhez
+    a cikkekhez).
+
+1-2 hasznos függvény:
+
+  - <https://www.quantstart.com/articles/Johansen-Test-for-Cointegrating-Time-Series-Analysis-in-R/>
+
+  - <https://www.rdocumentation.org/packages/aTSA/versions/3.1.2/topics/coint.test>
+
+## Setup
+
+``` r
+library(tidyverse)
+theme_set(theme_light() + theme(
+  legend.title = element_blank(),
+  plot.title.position = "plot"
+))
+load("Exercise-2.RData") # datas from Bankdata.xlsx
+```
+
+## Expoler the datas
+
+``` r
+Bankdata %>% pivot_longer(-1) %>% 
+  ggplot(aes(x = Date, y = value)) +
+  geom_line() +
+  facet_wrap(vars(name), nrow = 3, scales = "free")
+```
+
+![](Exercise-2_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+## In-sample: Engle-Granger method
+
+``` r
+Bankdata %>% select(-1) %>% 
+  apply(2, function(x) { # # of differences required for stationarity to each series
+    forecast::ndiffs(x, test = "adf", alpha = 0.01, type = "level")
+  })
+```
+
+    JPM BAC   C WFC  GS  MS 
+      1   1   1   1   1   1 
+
+``` r
+Bankdata %>% select(-1) %>% 
+  apply(2, function(x) { # # of differences required for stationarity to each series
+    diff(x)
+  }) %>% data.frame() %>% mutate(
+    Date = tail(Bankdata$Date, -1)
+  ) %>% pivot_longer(-Date) %>%
+  ggplot(aes(x = Date, y = value)) +
+  geom_line()+
+  facet_wrap(vars(name), nrow = 3, scales = "free")
+```
+
+![](Exercise-2_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+``` r
+cointegration_tests <- function(df, alpha) { # test cointegrity for all combination in a df
+  ndiff_df <- df %>% select(-1) %>% apply(2, function(x) { # # of differences required for stationarity to each series
+    forecast::ndiffs(x, test = "adf", alpha = alpha, type = "level")
+  })
+
+  v <- df %>% select(-1) %>% # remove year ---> IT MUST BE IN THE INPUT DF !
+    names(.)
+  df2 <- expand.grid(v, v) %>%
+    rename_all(funs(c("y", "x"))) %>%
+    mutate(
+      y = as.character(y),
+      x = as.character(x),
+      ndiff = ifelse(ndiff_df[y] == ndiff_df[x], ndiff_df[y], 0),
+      ndiff = ifelse(y == x, 0, ndiff) # if series are the same, put 0
+    )
+
+  v <- vector()
+  for (i in seq(nrow(df2))) {
+    if (df2[i, 3] != 0) {
+      if (lm(y ~ x, data = rename_all(data.frame(y = df[df2[i, 1]], x = df[df2[i, 2]]), funs(c("y", "x")))) %>%
+        broom::augment() %>% .$.resid %>%
+        forecast::ndiffs(test = "kpss", alpha = alpha, type = "level") == df2[i, 3] - 1) {
+        v[i] <- 2 # 2 ---> series are cointegrated
+      } else {
+        v[i] <- 1 # 1 ---> not cointegrated, but test is commitable
+      }
+    } else {
+      v[i] <- 0 # 0 ---> test is not commitable [I(0) OR not the same I() order OR series are the same]
+    }
+  }
+  df2 %>%
+    mutate(
+      cointegration = v
+    ) %>%
+    select(y, x, cointegration)
+}
+```
+
+``` r
+cointegration_tests(Bankdata, 0.01) %>% 
+  mutate(
+    cointegration = case_when(
+      cointegration == 0 ~ "Not commitable",
+      cointegration == 1 ~ "Not cointegrated",
+      cointegration == 2 ~ "Cointegrated"
+    ),
+    cointegration = factor(cointegration, levels = c("Cointegrated", "Not cointegrated", "Not commitable"))
+  ) %>%
+  ggplot() +
+  geom_tile(aes(x = x, y = y, fill = cointegration), color = "black") +
+  scale_fill_grey() +
+  theme(
+    axis.text.y = element_text(size = 8),
+    axis.text.x = element_text(angle = 90, vjust = 0.45, size = 8),
+  )
+```
+
+![](Exercise-2_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
