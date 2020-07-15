@@ -1,4 +1,4 @@
-Exercise-3
+Exercise 3
 ================
 Granát Marcell
 2020 07 14
@@ -305,25 +305,24 @@ merge(expand.grid(1:(nrow(Bankdata) - 249), c(0, 1, 2)) %>% rename_all(funs(c("t
       cointegration == 1 ~ "Not cointegrated",
       cointegration == 2 ~ "Cointegrated"
     ),
-    cointegration = factor(cointegration, levels = c("Cointegrated", "Not cointegrated", "Not commitable"))
+    cointegration = factor(cointegration, levels = c("Cointegrated", "Not cointegrated", "Not commitable")),
+    t = as.Date(Bankdata$Date)[t + 125]
   ) %>%
   ggplot() +
   geom_area(aes(x = t, y = n, fill = cointegration)) +
-  scale_x_continuous(expand = c(0, 0)) +
   scale_y_continuous(expand = c(0, 0)) +
+  scale_x_date(expand = c(0,0), date_breaks = "1 year", date_labels = "%Y") +
   theme(
     legend.position = "bottom"
-  ) +
-  labs(
+  ) + labs(
     title = "Summary results of Engle-Granger method with rolling window",
     subtitle = "Size of windows = 250",
     y = "# pairs with the result",
-    x = "# window",
+    x = "Time (middle of the window)",
     caption = "Calculations are based on ADF-test (level, alpha = 5%).\n
     # total pairs are 6.",
     tag = 'Figure 5'
-  ) +
-  scale_fill_grey()
+  ) + scale_fill_grey()
 ```
 
 ![](Exercise-3_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
@@ -365,24 +364,26 @@ johansen_tests_rw %>%
       name == "pct1" ~ "1%",
       name == "pct5" ~ "5%",
       name == "pct10" ~ "10%"
-    )
-  ) %>%
-  ggplot(aes(x = t, y = value, color = name)) +
+    ),
+    t = as.Date(Bankdata$Date)[t + 125]
+  ) %>% ggplot(aes(x = t, y = value, color = name)) +
   geom_jitter(width = 0, height = 0.05) +
   scale_color_grey() +
   theme(
     legend.position = "bottom"
   ) +
   scale_y_continuous(breaks = c(0, 1, 2)) +
-  scale_x_continuous(expand = c(0, 0)) +
+  scale_x_date(expand = c(0,0), date_breaks = "1 year", date_labels = "%Y") +
   labs(
     title = "Results of Johansen-test with rolling window",
     subtitle = "Size of windows = 250",
     y = "# cointegrated vectors",
-    x = "# window",
-    caption = "Points are jittered around their true y value for better visualisation.\n
-    (The number of cointegrated vectors is interger)",
+    x = "Time (middle of the window)",
+    caption = "Points are jittered around their true y value for better visualisation
+    (the number of cointegrated vectors is interger).",
     tag = 'Figure 6'
+  ) + theme(
+    panel.grid.minor.y = element_blank()
   )
 ```
 
