@@ -49,7 +49,11 @@ load("Exercise-3.RData") # datas from Bankdata.xlsx
 ```
 
 ```{r eval = knitr::is_html_output() == F, include = F}
-theme_set(ggdark::dark_theme_gray())
+theme_set(ggdark::dark_theme_gray()+ theme(
+  legend.title = element_blank(),
+  plot.title.position = "plot",
+  plot.tag.position = "topright"
+))
 ```
 
 
@@ -61,8 +65,8 @@ Bankdata %>%
   ggplot(aes(x = Date, y = value)) +
   geom_line() +
   facet_wrap(vars(name), nrow = 3, scales = "free") + labs(
-   title =  "Time-series",
-   tag = 'Figure 1', x = "Time", y = "Price"
+    title =  "Time-series",
+    tag = 'Figure 1', x = "Time", y = "Price"
   )
 ```
 
@@ -88,8 +92,8 @@ Bankdata %>%
   ggplot(aes(x = Date, y = value)) +
   geom_line() +
   facet_wrap(vars(name), nrow = 3, scales = "free")+ labs(
-   title =  "First difference of the time-series",
-   tag = 'Figure 2', x = "Time", y = "Price difference"
+    title =  "First difference of the time-series",
+    tag = 'Figure 2', x = "Time", y = "Price difference"
   )
 ```
 
@@ -100,7 +104,7 @@ cointegration_tests <- function(df, test, type, alpha) { # test cointegrity for 
     apply(2, function(x) { # # of differences required for stationarity to each series
       forecast::ndiffs(x, test = test, alpha = alpha, type = type)
     })
-
+  
   v <- df %>% select(-1) %>% # remove year ---> IT MUST BE IN THE INPUT DF !
     names(.)
   df2 <- expand.grid(v, v) %>%
@@ -111,13 +115,13 @@ cointegration_tests <- function(df, test, type, alpha) { # test cointegrity for 
       ndiff = ifelse(ndiff_df[y] == ndiff_df[x], ndiff_df[y], 0),
       ndiff = ifelse(y == x, 0, ndiff) # if series are the same, put 0
     )
-
+  
   v <- vector()
   for (i in seq(nrow(df2))) {
     if (df2[i, 3] != 0) {
       if (lm(y ~ x, data = rename_all(data.frame(y = df[df2[i, 1]], x = df[df2[i, 2]]), funs(c("y", "x")))) %>%
-        broom::augment() %>% .$.resid %>%
-        forecast::ndiffs(test = test, alpha = alpha, type = type) == df2[i, 3] - 1) {
+          broom::augment() %>% .$.resid %>%
+          forecast::ndiffs(test = test, alpha = alpha, type = type) == df2[i, 3] - 1) {
         v[i] <- 2 # 2 ---> series are cointegrated
       } else {
         v[i] <- 1 # 1 ---> not cointegrated, but test is commitable
@@ -212,17 +216,18 @@ cointegration_tests_rw %>% filter(cointegration == 2) %>%
   group_by(y, x) %>% tally() %>% arrange(x) %>% mutate(
     n = n/max(cointegration_tests_rw$t),
     n = scales::percent(n, accuracy = .01)
-  ) %>% pivot_wider(id_cols = y, values_from = n, names_from = x, names_prefix = "x = ") %>% arrange(y) %>% knitr::kable(caption = "Proportion of test with the result cointegrated")
+  ) %>% pivot_wider(id_cols = y, values_from = n, names_from = x, names_prefix = "x = ") %>% arrange(y) %>%
+  knitr::kable(caption = "Proportion of test with the result cointegrated")
 
 ```
 
 
 ```{r}
 merge(expand.grid(1:(nrow(Bankdata) - 249), c(0, 1, 2)) %>% rename_all(funs(c("t", "cointegration"))),
-  cointegration_tests_rw %>% filter(y != x) %>%
-    group_by(t, cointegration) %>%
-    summarise(n = n()),
-  all.x = T
+      cointegration_tests_rw %>% filter(y != x) %>%
+        group_by(t, cointegration) %>%
+        summarise(n = n()),
+      all.x = T
 ) %>%
   mutate(
     n = ifelse(is.na(n), 0, n),
@@ -309,3 +314,28 @@ johansen_tests_rw %>%
     tag = 'Figure 6'
   )
 ```
+
+```{r}
+johansen_tests_rw %>% select(-1) %>% gather() %>% mutate(
+    key = case_when(
+      key == "pct1" ~ "1%",
+      key == "pct5" ~ "5%",
+      key == "pct10" ~ "10%"
+    ),
+    key = factor(key, levels = c("10%", "5%", "1%"))
+  ) %>% group_by(key,value) %>% 
+  tally() %>% ggplot() + geom_bar(aes(x = key, y=n, fill=factor(value, levels = 2:0)), position = "fill",stat = "identity", color = "black") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1), expand = c(0,0), breaks = seq(from = 0, to = 1, by = .1)) + scale_fill_grey() +
+  labs(
+    title = "Results of Johansen-test with rolling window",
+    x = "Alpha",
+    y = "Proportion",
+    fill = "# cointegrated vectors",
+    subtitle = "Size of windows = 250",
+    tag = "Figure 7"
+  ) + theme(
+    legend.title = element_text(),
+    legend.position = "bottom"
+  )
+```
+
