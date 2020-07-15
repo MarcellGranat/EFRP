@@ -51,7 +51,8 @@ library(tidyverse)
 library(urca)
 theme_set(theme_light() + theme(
   legend.title = element_blank(),
-  plot.title.position = "plot"
+  plot.title.position = "plot",
+  plot.tag.position = "topright"
 ))
 load("Exercise-2.RData") # datas from Bankdata.xlsx
 ```
@@ -63,7 +64,10 @@ Bankdata %>%
   pivot_longer(-1) %>%
   ggplot(aes(x = Date, y = value)) +
   geom_line() +
-  facet_wrap(vars(name), nrow = 3, scales = "free")
+  facet_wrap(vars(name), nrow = 3, scales = "free") + labs(
+   title =  "Time-series",
+   tag = 'Figure 1'
+  )
 ```
 
 ![](Exercise-2_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
@@ -84,9 +88,7 @@ Bankdata %>%
 ``` r
 Bankdata %>%
   select(-1) %>%
-  apply(2, function(x) { # # of differences required for stationarity to each series
-    diff(x)
-  }) %>%
+  apply(2, function(x) {diff(x)}) %>%
   data.frame() %>%
   mutate(
     Date = tail(Bankdata$Date, -1)
@@ -94,7 +96,10 @@ Bankdata %>%
   pivot_longer(-Date) %>%
   ggplot(aes(x = Date, y = value)) +
   geom_line() +
-  facet_wrap(vars(name), nrow = 3, scales = "free")
+  facet_wrap(vars(name), nrow = 3, scales = "free")+ labs(
+   title =  "First difference of the time-series",
+   tag = 'Figure 2'
+  )
 ```
 
 ![](Exercise-2_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
@@ -160,7 +165,8 @@ cointegration_tests(df = Bankdata, test = "adf", type = "level", 0.05) %>%
     y = "Dependent variable in the OLS",
     x = "Independent variable in the OLS",
     title = "Results of Engle-Granger method",
-    caption = "Calculations are based on ADF-test (level, alpha = 5%)"
+    caption = "Calculations are based on ADF-test (level, alpha = 5%)",
+    tag = 'Figure 3'
   )
 ```
 
@@ -260,7 +266,8 @@ cointegration_tests_rw %>%
     y = "Result of the test",
     x = "# window",
     caption = "Calculations are based on ADF-test (level, alpha = 5%)\n
-    Depedent variables (in the OLS) are placed horizontal, independents are vertical."
+    Depedent variables (in the OLS) are placed horizontal, independents are vertical.",
+    tag = 'Figure 4'
   )
 ```
 
@@ -295,7 +302,8 @@ merge(expand.grid(1:(nrow(Bankdata) - 249), c(0, 1, 2)) %>% rename_all(funs(c("t
     y = "# pairs with the result",
     x = "# window",
     caption = "Calculations are based on ADF-test (level, alpha = 5%).\n
-    # total pairs are 6."
+    # total pairs are 6.",
+    tag = 'Figure 5'
   ) +
   scale_fill_grey()
 ```
@@ -355,7 +363,8 @@ johansen_tests_rw %>%
     y = "# cointegrated vectors",
     x = "# window",
     caption = "Points are jittered around their true y value for better visualisation.\n
-    (The number of cointegrated vectors is interger)"
+    (The number of cointegrated vectors is interger)",
+    tag = 'Figure 6'
   )
 ```
 
