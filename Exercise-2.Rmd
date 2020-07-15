@@ -6,7 +6,6 @@ output: github_document
 editor_options: 
   chunk_output_type: inline
 ---
-
 ## Feladat leírása
 
 Az Excel a következő információkat tartalmazza:
@@ -30,17 +29,17 @@ A görgetett ablak mérete legyen 250 nap. Minden egyes lépésnél frissüljön
 1-2 hasznos függvény:
 
 + https://www.quantstart.com/articles/Johansen-Test-for-Cointegrating-Time-Series-Analysis-in-R/
-
 + https://www.rdocumentation.org/packages/aTSA/versions/3.1.2/topics/coint.test
 
 ## Setup
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, fig.height = 6, fig.width = 10, comment = "" )
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, fig.height = 10, fig.width = 10, comment = "")
 ```
 
 ```{r}
 library(tidyverse)
+library(urca)
 theme_set(theme_light() + theme(
   legend.title = element_blank(),
   plot.title.position = "plot"
@@ -55,8 +54,9 @@ theme_set(ggdark::dark_theme_gray())
 
 ## Explorer the datas
 
-```{r fig.height=10}
-Bankdata %>% pivot_longer(-1) %>% 
+```{r}
+Bankdata %>%
+  pivot_longer(-1) %>%
   ggplot(aes(x = Date, y = value)) +
   geom_line() +
   facet_wrap(vars(name), nrow = 3, scales = "free")
@@ -65,29 +65,36 @@ Bankdata %>% pivot_longer(-1) %>%
 ## In-sample: Engle-Granger method
 
 ```{r}
-Bankdata %>% select(-1) %>% 
+Bankdata %>%
+  select(-1) %>%
   apply(2, function(x) { # # of differences required for stationarity to each series
     forecast::ndiffs(x, test = "adf", alpha = 0.05, type = "level")
   })
 ```
 
 ```{r}
-Bankdata %>% select(-1) %>% 
+Bankdata %>%
+  select(-1) %>%
   apply(2, function(x) { # # of differences required for stationarity to each series
     diff(x)
-  }) %>% data.frame() %>% mutate(
+  }) %>%
+  data.frame() %>%
+  mutate(
     Date = tail(Bankdata$Date, -1)
-  ) %>% pivot_longer(-Date) %>%
+  ) %>%
+  pivot_longer(-Date) %>%
   ggplot(aes(x = Date, y = value)) +
-  geom_line()+
+  geom_line() +
   facet_wrap(vars(name), nrow = 3, scales = "free")
 ```
 
 ```{r}
 cointegration_tests <- function(df, test, type, alpha) { # test cointegrity for all combination in a df
-  ndiff_df <- df %>% select(-1) %>% apply(2, function(x) { # # of differences required for stationarity to each series
-    forecast::ndiffs(x, test = test, alpha = alpha, type = type)
-  })
+  ndiff_df <- df %>%
+    select(-1) %>%
+    apply(2, function(x) { # # of differences required for stationarity to each series
+      forecast::ndiffs(x, test = test, alpha = alpha, type = type)
+    })
 
   v <- df %>% select(-1) %>% # remove year ---> IT MUST BE IN THE INPUT DF !
     names(.)
@@ -123,7 +130,7 @@ cointegration_tests <- function(df, test, type, alpha) { # test cointegrity for 
 ```
 
 ```{r}
-cointegration_tests(df = Bankdata, test= "adf", type = "level", 0.05) %>% 
+cointegration_tests(df = Bankdata, test = "adf", type = "level", 0.05) %>%
   mutate(
     cointegration = case_when(
       cointegration == 0 ~ "Not commitable",
@@ -137,12 +144,149 @@ cointegration_tests(df = Bankdata, test= "adf", type = "level", 0.05) %>%
   scale_fill_grey() +
   theme(
     axis.text.x = element_text(angle = 90, vjust = 0.45),
-  ) + labs(
+  ) +
+  labs(
     y = "Dependent variable in the OLS",
     x = "Independent variable in the OLS",
     title = "Results of Engle-Granger method",
-    caption = "ADF-test (without trend and constant)"
+    caption = "Calculations are based on ADF-test (level, alpha = 5%)"
+  )
+```
+
+## In-sample: Johansen-test
+
+```{r}
+Bankdata %>%
+  select(-1) %>%
+  ca.jo(type = "eigen", K = 5, ecdet = "none", spec = "longrun") %>%
+  summary()
+```
+
+Number of cointegrated vectors: 1.
+
+## Out-of-sample: Engle-Granger method
+
+```{r eval=F, include=T}
+for (i in 1:(nrow(Bankdata) - 249)) {
+  if (i == 1) {
+    cointegration_tests_rw <- mutate(
+      cointegration_tests(df = Bankdata[i:(i + 249), 1:4], test = "adf", type = "level", alpha = 0.05),
+      t = i
+    )
+  } else {
+    cointegration_tests_rw <- rbind(cointegration_tests_rw, mutate(
+      cointegration_tests(df = Bankdata[i:(i + 249), 1:4], test = "adf", type = "level", alpha = 0.05),
+      t = i
+    ))
+  }
+}
+```
+
+```{r}
+cointegration_tests_rw %>%
+  filter(y != x) %>%
+  ggplot(aes(x = t, y = cointegration)) +
+  geom_point() +
+  facet_grid(cols = vars(x), rows = vars(y)) +
+  scale_y_continuous(breaks = c(0, 1, 2), labels = c("Not commitable", "Not cointegrated", "Cointegrated")) +
+  labs(
+    title = "Results of Engle-Granger method with rolling window",
+    subtitle = "Size of windows = 250",
+    y = "Result of the test",
+    x = "# window",
+    caption = "Calculations are based on ADF-test (level, alpha = 5%)\n
+    Depedent variables (in the OLS) are placed horizontal, independents are vertical."
   )
 ```
 
 
+```{r}
+merge(expand.grid(1:(nrow(Bankdata) - 249), c(0, 1, 2)) %>% rename_all(funs(c("t", "cointegration"))),
+  cointegration_tests_rw %>% filter(y != x) %>%
+    group_by(t, cointegration) %>%
+    summarise(n = n()),
+  all.x = T
+) %>%
+  mutate(
+    n = ifelse(is.na(n), 0, n),
+    cointegration = case_when(
+      cointegration == 0 ~ "Not commitable",
+      cointegration == 1 ~ "Not cointegrated",
+      cointegration == 2 ~ "Cointegrated"
+    ),
+    cointegration = factor(cointegration, levels = c("Cointegrated", "Not cointegrated", "Not commitable"))
+  ) %>%
+  ggplot() +
+  geom_area(aes(x = t, y = n, fill = cointegration)) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  theme(
+    legend.position = "bottom"
+  ) +
+  labs(
+    title = "Summary results of Engle-Granger method with rolling window",
+    subtitle = "Size of windows = 250",
+    y = "# pairs with the result",
+    x = "# window",
+    caption = "Calculations are based on ADF-test (level, alpha = 5%).\n
+    # total pairs are 6."
+  ) +
+  scale_fill_grey()
+```
+
+## Out-of-sample: Johansen-test
+
+```{r}
+johansen_tests_rw <- data.frame(t = 1:(nrow(Bankdata) - 249)) %>% mutate(
+  pct10 = NA, pct5 = NA, pct1 = NA
+)
+
+for (i in 1:(nrow(Bankdata) - 249)) {
+  if (i == 1) {
+    johansen_critical_values <- ca.jo(
+      x = Bankdata[i:(i + 249), 2:4], type = "eigen",
+      K = 5, ecdet = "none", spec = "longrun"
+    )@cval
+  }
+  johansen_tests_rw[i, 2] <- which.max(rev(ca.jo(
+    x = Bankdata[i:(i + 249), 2:4], type = "eigen",
+    K = 5, ecdet = "none", spec = "longrun"
+  )@teststat) < rev(johansen_critical_values[, 1])) - 1
+  johansen_tests_rw[i, 3] <- which.max(rev(ca.jo(
+    x = Bankdata[i:(i + 249), 2:4], type = "eigen",
+    K = 5, ecdet = "none", spec = "longrun"
+  )@teststat) < rev(johansen_critical_values[, 2])) - 1
+  johansen_tests_rw[i, 4] <- which.max(rev(ca.jo(
+    x = Bankdata[i:(i + 249), 2:4], type = "eigen",
+    K = 5, ecdet = "none", spec = "longrun"
+  )@teststat) < rev(johansen_critical_values[, 3])) - 1
+}
+```
+
+```{r}
+johansen_tests_rw %>%
+  pivot_longer(-1) %>%
+  mutate(
+    name = case_when(
+      name == "pct1" ~ "1%",
+      name == "pct5" ~ "5%",
+      name == "pct10" ~ "10%"
+    )
+  ) %>%
+  ggplot(aes(x = t, y = value, color = name)) +
+  geom_jitter(width = 0, height = 0.05) +
+  scale_color_grey() +
+  theme(
+    legend.position = "bottom"
+  ) +
+  scale_y_continuous(breaks = c(0, 1, 2)) +
+  scale_x_continuous(expand = c(0, 0)) +
+  labs(
+    title = "Results of Johansen-test with rolling window",
+    subtitle = "Size of windows = 250",
+    y = "# cointegrated vectors",
+    x = "# window",
+    caption = "Points are jittered around their true y value for better visualisation.\n
+    (The number of cointegrated vectors is interger)"
+  )
+```
