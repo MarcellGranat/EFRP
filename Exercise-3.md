@@ -52,7 +52,8 @@ library(urca)
 theme_set(theme_light() + theme(
   legend.title = element_blank(),
   plot.title.position = "plot",
-  plot.tag.position = "topright"
+  plot.tag.position = "topright",
+  plot.caption.position = "plot"
 ))
 load("Exercise-3.RData") # datas from Bankdata.xlsx
 ```
@@ -64,9 +65,10 @@ Bankdata %>%
   pivot_longer(-1) %>%
   ggplot(aes(x = Date, y = value)) +
   geom_line() +
-  facet_wrap(vars(name), nrow = 3, scales = "free") + labs(
-    title =  "Time-series",
-    tag = 'Figure 1', x = "Time", y = "Price"
+  facet_wrap(vars(name), nrow = 3, scales = "free") +
+  labs(
+    title = "Time-series",
+    tag = "Figure 1", x = "Time", y = "Price"
   )
 ```
 
@@ -88,7 +90,9 @@ Bankdata %>%
 ``` r
 Bankdata %>%
   select(-1) %>%
-  apply(2, function(x) {diff(x)}) %>%
+  apply(2, function(x) {
+    diff(x)
+  }) %>%
   data.frame() %>%
   mutate(
     Date = tail(Bankdata$Date, -1)
@@ -96,9 +100,10 @@ Bankdata %>%
   pivot_longer(-Date) %>%
   ggplot(aes(x = Date, y = value)) +
   geom_line() +
-  facet_wrap(vars(name), nrow = 3, scales = "free")+ labs(
-    title =  "First difference of the time-series",
-    tag = 'Figure 2', x = "Time", y = "Price difference"
+  facet_wrap(vars(name), nrow = 3, scales = "free") +
+  labs(
+    title = "First difference of the time-series",
+    tag = "Figure 2", x = "Time", y = "Price difference"
   )
 ```
 
@@ -111,7 +116,7 @@ cointegration_tests <- function(df, test, type, alpha) { # test cointegrity for 
     apply(2, function(x) { # # of differences required for stationarity to each series
       forecast::ndiffs(x, test = test, alpha = alpha, type = type)
     })
-  
+
   v <- df %>% select(-1) %>% # remove year ---> IT MUST BE IN THE INPUT DF !
     names(.)
   df2 <- expand.grid(v, v) %>%
@@ -122,13 +127,13 @@ cointegration_tests <- function(df, test, type, alpha) { # test cointegrity for 
       ndiff = ifelse(ndiff_df[y] == ndiff_df[x], ndiff_df[y], 0),
       ndiff = ifelse(y == x, 0, ndiff) # if series are the same, put 0
     )
-  
+
   v <- vector()
   for (i in seq(nrow(df2))) {
     if (df2[i, 3] != 0) {
       if (lm(y ~ x, data = rename_all(data.frame(y = df[df2[i, 1]], x = df[df2[i, 2]]), funs(c("y", "x")))) %>%
-          broom::augment() %>% .$.resid %>%
-          forecast::ndiffs(test = test, alpha = alpha, type = type) == df2[i, 3] - 1) {
+        broom::augment() %>% .$.resid %>%
+        forecast::ndiffs(test = test, alpha = alpha, type = type) == df2[i, 3] - 1) {
         v[i] <- 2 # 2 ---> series are cointegrated
       } else {
         v[i] <- 1 # 1 ---> not cointegrated, but test is commitable
@@ -166,7 +171,7 @@ cointegration_tests(df = Bankdata, test = "adf", type = "level", 0.05) %>%
     x = "Independent variable in the OLS",
     title = "Results of Engle-Granger method",
     caption = "Calculations are based on ADF-test (level, alpha = 5%)",
-    tag = 'Figure 3'
+    tag = "Figure 3"
   )
 ```
 
@@ -267,19 +272,25 @@ cointegration_tests_rw %>%
     x = "# window",
     caption = "Calculations are based on ADF-test (level, alpha = 5%)\n
     Depedent variables (in the OLS) are placed horizontal, independents are vertical.",
-    tag = 'Figure 4'
+    tag = "Figure 4"
   )
 ```
 
 ![](Exercise-3_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 ``` r
-cointegration_tests_rw %>% filter(cointegration == 2) %>% 
-  mutate(cointegration = factor(cointegration)) %>% 
-  group_by(y, x) %>% tally() %>% arrange(x) %>% mutate(
-    n = n/max(cointegration_tests_rw$t),
+cointegration_tests_rw %>%
+  filter(cointegration == 2) %>%
+  mutate(cointegration = factor(cointegration)) %>%
+  group_by(y, x) %>%
+  tally() %>%
+  arrange(x) %>%
+  mutate(
+    n = n / max(cointegration_tests_rw$t),
     n = scales::percent(n, accuracy = .01)
-  ) %>% pivot_wider(id_cols = y, values_from = n, names_from = x, names_prefix = "x = ") %>% arrange(y) %>%
+  ) %>%
+  pivot_wider(id_cols = y, values_from = n, names_from = x, names_prefix = "x = ") %>%
+  arrange(y) %>%
   knitr::kable(caption = "Proportion of test with the result cointegrated")
 ```
 
@@ -293,10 +304,10 @@ Proportion of test with the result cointegrated
 
 ``` r
 merge(expand.grid(1:(nrow(Bankdata) - 249), c(0, 1, 2)) %>% rename_all(funs(c("t", "cointegration"))),
-      cointegration_tests_rw %>% filter(y != x) %>%
-        group_by(t, cointegration) %>%
-        summarise(n = n()),
-      all.x = T
+  cointegration_tests_rw %>% filter(y != x) %>%
+    group_by(t, cointegration) %>%
+    summarise(n = n()),
+  all.x = T
 ) %>%
   mutate(
     n = ifelse(is.na(n), 0, n),
@@ -311,18 +322,20 @@ merge(expand.grid(1:(nrow(Bankdata) - 249), c(0, 1, 2)) %>% rename_all(funs(c("t
   ggplot() +
   geom_area(aes(x = t, y = n, fill = cointegration)) +
   scale_y_continuous(expand = c(0, 0)) +
-  scale_x_date(expand = c(0,0), date_breaks = "1 year", date_labels = "%Y") +
+  scale_x_date(expand = c(0, 0), date_breaks = "1 year", date_labels = "%Y") +
   theme(
     legend.position = "bottom"
-  ) + labs(
+  ) +
+  labs(
     title = "Summary results of Engle-Granger method with rolling window",
     subtitle = "Size of windows = 250",
     y = "# pairs with the result",
     x = "Time (middle of the window)",
     caption = "Calculations are based on ADF-test (level, alpha = 5%).\n
     # total pairs are 6.",
-    tag = 'Figure 5'
-  ) + scale_fill_grey()
+    tag = "Figure 5"
+  ) +
+  scale_fill_grey()
 ```
 
 ![](Exercise-3_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
@@ -357,7 +370,13 @@ for (i in 1:(nrow(Bankdata) - 249)) {
 ```
 
 ``` r
-johansen_tests_rw %>%
+  ggplot() +
+    geom_ribbon(aes(
+      x = c(as.Date("2007-12-01"), as.Date("2009-12-01")),
+      ymin = -Inf,
+      ymax = Inf,
+      fill = "recession"), color = "black", alpha = .6) +
+  geom_jitter(data = johansen_tests_rw %>%
   pivot_longer(-1) %>%
   mutate(
     name = case_when(
@@ -366,51 +385,113 @@ johansen_tests_rw %>%
       name == "pct10" ~ "10%"
     ),
     t = as.Date(Bankdata$Date)[t + 125]
-  ) %>% ggplot(aes(x = t, y = value, color = name)) +
-  geom_jitter(width = 0, height = 0.05) +
+  ),
+  aes(x = t, y = value, color = name),width = 0, height = 0.05) +
   scale_color_grey() +
   theme(
     legend.position = "bottom"
   ) +
   scale_y_continuous(breaks = c(0, 1, 2)) +
-  scale_x_date(expand = c(0,0), date_breaks = "1 year", date_labels = "%Y") +
+  scale_x_date(expand = c(0, 0), date_breaks = "1 year", date_labels = "%Y") +
   labs(
-    title = "Results of Johansen-test with rolling window",
+    title = "Results of Johansen-test with rolling window across time",
     subtitle = "Size of windows = 250",
     y = "# cointegrated vectors",
     x = "Time (middle of the window)",
-    caption = "Points are jittered around their true y value for better visualisation
-    (the number of cointegrated vectors is interger).",
-    tag = 'Figure 6'
-  ) + theme(
+    caption = "Points are jittered around their true y value for better visualisation (the number of cointegrated vectors is interger).\n
+    Date of recession is from the National Bureau of Economic Research (https://www.nber.org/cycles.html).",
+    tag = "Figure 6"
+  ) +
+  theme(
     panel.grid.minor.y = element_blank()
-  )
+  ) +
+  scale_fill_manual(values = c("recession" = "#FF5B6B"))
 ```
 
 ![](Exercise-3_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
 ``` r
-johansen_tests_rw %>% select(-1) %>% gather() %>% mutate(
+johansen_tests_rw %>%
+  select(-1) %>%
+  gather() %>%
+  mutate(
     key = case_when(
       key == "pct1" ~ "1%",
       key == "pct5" ~ "5%",
       key == "pct10" ~ "10%"
     ),
     key = factor(key, levels = c("10%", "5%", "1%"))
-  ) %>% group_by(key,value) %>% 
-  tally() %>% ggplot() + geom_bar(aes(x = key, y=n, fill=factor(value, levels = 2:0)), position = "fill",stat = "identity", color = "black") +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1), expand = c(0,0), breaks = seq(from = 0, to = 1, by = .1)) + scale_fill_grey() +
+  ) %>%
+  group_by(key, value) %>%
+  tally() %>%
+  ggplot() +
+  geom_bar(aes(x = key, y = n, fill = factor(value, levels = 2:0)), position = "fill", stat = "identity", color = "black") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1), expand = c(0, 0), breaks = seq(from = 0, to = 1, by = .1)) +
+  scale_fill_grey() +
   labs(
-    title = "Results of Johansen-test with rolling window",
+    title = "Distribuiton of the Johansen-test results with rolling window",
     x = "Alpha",
     y = "Proportion",
     fill = "# cointegrated vectors",
     subtitle = "Size of windows = 250",
     tag = "Figure 7"
-  ) + theme(
+  ) +
+  theme(
     legend.title = element_text(),
     legend.position = "bottom"
-  )
+  ) 
 ```
 
 ![](Exercise-3_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+
+``` r
+johansen_tests_rw %>%
+  pivot_longer(-1) %>%
+  mutate(
+    name = factor(name, levels = c("pct1", "pct5", "pct10")),
+    t = as.Date(Bankdata$Date)[t + 125],
+    t = ifelse(t > as.Date("2007-12-01") & t < as.Date("2009-12-01"), "recession", "expansion")
+  ) %>% filter(t == "expansion") %>% group_by(name) %>% count(value) %>% pivot_wider(
+    id_cols = value, values_from = n, names_from = name
+  )  %>% mutate(
+    pct1 = scales::percent(pct1/sum(pct1, na.rm = T), accuracy = .01),
+    pct5 = scales::percent(pct5/sum(pct5, na.rm = T), accuracy = .01),
+    pct10 = scales::percent(pct10/sum(pct10, na.rm = T), accuracy = .01)
+  ) %>% rename_all(funs(c("# cointegrated vectors", "1%", "5%", "10%"))) %>% 
+  knitr::kable(caption = "Distribution of Johansen-test results on different alpha during expansion")
+```
+
+| \# cointegrated vectors | 1%     | 5%     | 10%    |
+| ----------------------: | :----- | :----- | :----- |
+|                       0 | 98.42% | 95.88% | 91.58% |
+|                       1 | 1.58%  | 4.12%  | 7.34%  |
+|                       2 | NA     | NA     | 1.08%  |
+
+Distribution of Johansen-test results on different alpha during
+expansion
+
+``` r
+johansen_tests_rw %>%
+  pivot_longer(-1) %>%
+  mutate(
+    name = factor(name, levels = c("pct1", "pct5", "pct10")),
+    t = as.Date(Bankdata$Date)[t + 125],
+    t = ifelse(t > as.Date("2007-12-01") & t < as.Date("2009-12-01"), "recession", "expansion")
+  ) %>% filter(t == "recession") %>% group_by(name) %>% count(value) %>% pivot_wider(
+    id_cols = value, values_from = n, names_from = name
+  )  %>% mutate(
+    pct1 = scales::percent(pct1/sum(pct1, na.rm = T), accuracy = .01),
+    pct5 = scales::percent(pct5/sum(pct5, na.rm = T), accuracy = .01),
+    pct10 = scales::percent(pct10/sum(pct10, na.rm = T), accuracy = .01)
+  ) %>% rename_all(funs(c("# cointegrated vectors", "1%", "5%", "10%"))) %>% 
+  knitr::kable(caption = "Distribution of Johansen-test results on different alpha during recession")
+```
+
+| \# cointegrated vectors | 1%     | 5%     | 10%    |
+| ----------------------: | :----- | :----- | :----- |
+|                       0 | 96.82% | 90.26% | 82.50% |
+|                       1 | 3.18%  | 8.15%  | 15.31% |
+|                       2 | NA     | 1.59%  | 2.19%  |
+
+Distribution of Johansen-test results on different alpha during
+recession
