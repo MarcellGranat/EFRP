@@ -49,12 +49,6 @@ takar\!
 ``` r
 library(tidyverse)
 library(urca)
-theme_set(theme_light() + theme(
-  legend.title = element_blank(),
-  plot.title.position = "plot",
-  plot.tag.position = "topright",
-  plot.caption.position = "plot"
-))
 load("Exercise-3.RData") # datas from Bankdata.xlsx
 ```
 
@@ -72,18 +66,35 @@ Bankdata %>%
   )
 ```
 
-![](Exercise-3_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](Exercise-3_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+``` r
+Bankdata %>% select(-1) %>% cor() %>% data.frame() %>% rownames_to_column() %>% pivot_longer(-1) %>% mutate(
+  value = ifelse(rowname == name, NA, value)
+) %>% 
+  ggplot(aes(rowname, name, fill = value)) + geom_tile(color = "black") +
+      scale_fill_gradient2(
+      low = "#00A3AB", high = "#FF5B6B", space = "Lab", na.value = "grey50",
+      guide = "legend", midpoint = 0, aesthetics = "fill", limits = c(-1,1)
+    ) + labs(
+      x = "", y = "", title = "Correlation-matrix", tag = "Figure 2"
+    )
+```
+
+![](Exercise-3_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ## I. Engle-Granger method
 
 ``` r
+cat("# of differences required for stationarity to each series:\n")
 Bankdata %>%
   select(-1) %>%
-  apply(2, function(x) { # # of differences required for stationarity to each series
+  apply(2, function(x) {
     forecast::ndiffs(x, test = "adf", alpha = 0.05, type = "level")
   })
 ```
 
+    # of differences required for stationarity to each series:
     JPM BAC   C WFC  GS  MS 
       1   1   1   1   1   1 
 
@@ -103,11 +114,11 @@ Bankdata %>%
   facet_wrap(vars(name), nrow = 3, scales = "free") +
   labs(
     title = "First difference of the time-series",
-    tag = "Figure 2", x = "Time", y = "Price difference"
+    tag = "Figure 3", x = "Time", y = "Price difference"
   )
 ```
 
-![](Exercise-3_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](Exercise-3_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 ``` r
 cointegration_tests <- function(df, test, type, alpha) { # test cointegrity for all combination in a df
@@ -151,7 +162,7 @@ cointegration_tests <- function(df, test, type, alpha) { # test cointegrity for 
 ```
 
 ``` r
-cointegration_tests(df = Bankdata, test = "adf", type = "level", 0.05) %>%
+cointegration_tests(df = Bankdata, test = "adf", type = "level", alpha = 0.05) %>%
   mutate(
     cointegration = case_when(
       cointegration == 0 ~ "Not commitable",
@@ -171,11 +182,11 @@ cointegration_tests(df = Bankdata, test = "adf", type = "level", 0.05) %>%
     x = "Independent variable in the OLS",
     title = "Results of Engle-Granger method",
     caption = "Calculations are based on ADF-test (level, alpha = 5%)",
-    tag = "Figure 3"
+    tag = "Figure 4"
   )
 ```
 
-![](Exercise-3_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](Exercise-3_files/figure-gfm/cointegration_tests-1.png)<!-- -->
 
 ## II. Johansen-test
 
@@ -272,7 +283,7 @@ cointegration_tests_rw %>%
     x = "# window",
     caption = "Calculations are based on ADF-test (level, alpha = 5%)\n
     Depedent variables (in the OLS) are placed horizontal, independents are vertical.",
-    tag = "Figure 4"
+    tag = "Figure 5"
   )
 ```
 
@@ -333,7 +344,7 @@ merge(expand.grid(1:(nrow(Bankdata) - 249), c(0, 1, 2)) %>% rename_all(funs(c("t
     x = "Time (middle of the window)",
     caption = "Calculations are based on ADF-test (level, alpha = 5%).\n
     # total pairs are 6.",
-    tag = "Figure 5"
+    tag = "Figure 6"
   ) +
   scale_fill_grey()
 ```
@@ -400,7 +411,7 @@ for (i in 1:(nrow(Bankdata) - 249)) {
     x = "Time (middle of the window)",
     caption = "Points are jittered around their true y value for better visualisation (the number of cointegrated vectors is interger).\n
     Date of recession is from the National Bureau of Economic Research (https://www.nber.org/cycles.html).",
-    tag = "Figure 6"
+    tag = "Figure 7"
   ) +
   theme(
     panel.grid.minor.y = element_blank()
@@ -408,7 +419,7 @@ for (i in 1:(nrow(Bankdata) - 249)) {
   scale_fill_manual(values = c("recession" = "#FF5B6B"))
 ```
 
-![](Exercise-3_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](Exercise-3_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 ``` r
 johansen_tests_rw %>%
@@ -434,7 +445,7 @@ johansen_tests_rw %>%
     y = "Proportion",
     fill = "# cointegrated vectors",
     subtitle = "Size of windows = 250",
-    tag = "Figure 7"
+    tag = "Figure 8"
   ) +
   theme(
     legend.title = element_text(),
@@ -442,7 +453,7 @@ johansen_tests_rw %>%
   ) 
 ```
 
-![](Exercise-3_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+![](Exercise-3_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
 ``` r
 johansen_tests_rw %>%
