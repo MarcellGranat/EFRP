@@ -52,7 +52,7 @@ library(urca)
 load("Exercise-3.RData") # datas from Bankdata.xlsx
 ```
 
-## Explorer the datas
+## Explorer the data
 
 ``` r
 Bankdata %>%
@@ -66,7 +66,7 @@ Bankdata %>%
   )
 ```
 
-![](Exercise-3_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+<img src="plot/unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
 
 ``` r
 Bankdata %>% select(-1) %>% cor() %>% data.frame() %>% rownames_to_column() %>% pivot_longer(-1) %>% mutate(
@@ -78,10 +78,12 @@ Bankdata %>% select(-1) %>% cor() %>% data.frame() %>% rownames_to_column() %>% 
       guide = "legend", midpoint = 0, aesthetics = "fill", limits = c(-1,1)
     ) + labs(
       x = "", y = "", title = "Correlation-matrix", tag = "Figure 2"
-    )
+    ) + theme(
+panel.border = element_blank()
+)
 ```
 
-![](Exercise-3_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+<img src="plot/unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
 
 ## I. Engle-Granger method
 
@@ -118,7 +120,7 @@ Bankdata %>%
   )
 ```
 
-![](Exercise-3_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+<img src="plot/unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
 
 ``` r
 cointegration_tests <- function(df, test, type, alpha) { # test cointegrity for all combination in a df
@@ -162,7 +164,11 @@ cointegration_tests <- function(df, test, type, alpha) { # test cointegrity for 
 ```
 
 ``` r
-cointegration_tests(df = Bankdata, test = "adf", type = "level", alpha = 0.05) %>%
+cointegration_tests_results <- cointegration_tests(df = Bankdata, test = "adf", type = "level", alpha = 0.05)
+```
+
+``` r
+cointegration_tests_results %>%
   mutate(
     cointegration = case_when(
       cointegration == 0 ~ "Not commitable",
@@ -183,10 +189,12 @@ cointegration_tests(df = Bankdata, test = "adf", type = "level", alpha = 0.05) %
     title = "Results of Engle-Granger method",
     caption = "Calculations are based on ADF-test (level, alpha = 5%)",
     tag = "Figure 4"
-  )
+  ) + theme(
+  panel.border = element_blank()
+)
 ```
 
-![](Exercise-3_files/figure-gfm/cointegration_tests-1.png)<!-- -->
+<img src="plot/unnamed-chunk-10-1.png" style="display: block; margin: auto;" />
 
 ## II. Johansen-test
 
@@ -287,7 +295,7 @@ cointegration_tests_rw %>%
   )
 ```
 
-![](Exercise-3_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+<img src="plot/unnamed-chunk-12-1.png" style="display: block; margin: auto;" />
 
 ``` r
 cointegration_tests_rw %>%
@@ -349,7 +357,7 @@ merge(expand.grid(1:(nrow(Bankdata) - 249), c(0, 1, 2)) %>% rename_all(funs(c("t
   scale_fill_grey()
 ```
 
-![](Exercise-3_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+<img src="plot/unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
 
 ## IV. Johansen-test with rolling window
 
@@ -419,7 +427,7 @@ for (i in 1:(nrow(Bankdata) - 249)) {
   scale_fill_manual(values = c("recession" = "#FF5B6B"))
 ```
 
-![](Exercise-3_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+<img src="plot/unnamed-chunk-15-1.png" style="display: block; margin: auto;" />
 
 ``` r
 johansen_tests_rw %>%
@@ -453,7 +461,7 @@ johansen_tests_rw %>%
   ) 
 ```
 
-![](Exercise-3_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+<img src="plot/unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
 
 ``` r
 johansen_tests_rw %>%

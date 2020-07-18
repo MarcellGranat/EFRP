@@ -34,7 +34,7 @@ A görgetett ablak mérete legyen 250 nap. Minden egyes lépésnél frissüljön
 ## Setup
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, fig.height = 10, fig.width = 10, comment = "", tidy = T)
+knitr::opts_chunk$set(echo = TRUE, comment = "", warning = F, message = F, fig.align = "center", fig.height = 5, fig.width = 10, fig.path='plot/', tidy = T, cache.path="cache/")
 ```
 
 ```{r}
@@ -52,6 +52,17 @@ theme_set(theme_light() + theme(
 ))
 ```
 
+```{r eval = F, include = F}
+# Chunk is only to save plots as PDF (to import to LateX)
+knitr::opts_chunk$set(dev = "pdf")
+theme_set(theme_light() + theme(
+  legend.title = element_blank(),
+  plot.title = element_blank(),
+  plot.tag = element_blank(),
+  plot.caption = element_blank()
+))
+```
+
 ```{r eval = knitr::is_html_output() == F, include = F}
 theme_set(ggdark::dark_theme_gray() + theme(
   legend.title = element_blank(),
@@ -60,7 +71,7 @@ theme_set(ggdark::dark_theme_gray() + theme(
 ))
 ```
 
-## Explorer the datas
+## Explorer the data
 
 ```{r}
 Bankdata %>%
@@ -84,7 +95,9 @@ Bankdata %>% select(-1) %>% cor() %>% data.frame() %>% rownames_to_column() %>% 
       guide = "legend", midpoint = 0, aesthetics = "fill", limits = c(-1,1)
     ) + labs(
       x = "", y = "", title = "Correlation-matrix", tag = "Figure 2"
-    )
+    ) + theme(
+panel.border = element_blank()
+)
 ```
 
 ## I. Engle-Granger method
@@ -159,8 +172,13 @@ cointegration_tests <- function(df, test, type, alpha) { # test cointegrity for 
 }
 ```
 
-```{r cointegration_tests, fig.height=8.5, cache=T}
-cointegration_tests(df = Bankdata, test = "adf", type = "level", alpha = 0.05) %>%
+```{r cointegration_tests, fig.height=8.5, cache=T, dev='png'}
+cointegration_tests_results <- cointegration_tests(df = Bankdata, test = "adf", type = "level", alpha = 0.05)
+```
+
+
+```{r fig.height=8.5}
+cointegration_tests_results %>%
   mutate(
     cointegration = case_when(
       cointegration == 0 ~ "Not commitable",
@@ -181,7 +199,9 @@ cointegration_tests(df = Bankdata, test = "adf", type = "level", alpha = 0.05) %
     title = "Results of Engle-Granger method",
     caption = "Calculations are based on ADF-test (level, alpha = 5%)",
     tag = "Figure 4"
-  )
+  ) + theme(
+  panel.border = element_blank()
+)
 ```
 
 ## II. Johansen-test
@@ -197,7 +217,7 @@ Number of cointegrated vectors: 1.
 
 ## III. Engle-Granger method with rolling window
 
-```{r cointegration_tests_rw, cache=T}
+```{r cointegration_tests_rw, cache=T, dev='png'}
 for (i in 1:(nrow(Bankdata) - 249)) {
   if (i == 1) {
     cointegration_tests_rw <- mutate(
@@ -286,7 +306,7 @@ merge(expand.grid(1:(nrow(Bankdata) - 249), c(0, 1, 2)) %>% rename_all(funs(c("t
 
 ## IV. Johansen-test with rolling window
 
-```{r johansen_tests_rw, cache=T}
+```{r johansen_tests_rw, cache=T, dev='png'}
 johansen_tests_rw <- data.frame(t = 1:(nrow(Bankdata) - 249)) %>% mutate(
   pct10 = NA, pct5 = NA, pct1 = NA
 )
