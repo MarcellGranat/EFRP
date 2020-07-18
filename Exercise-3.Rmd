@@ -58,6 +58,7 @@ knitr::opts_chunk$set(dev = "pdf")
 theme_set(theme_light() + theme(
   legend.title = element_blank(),
   plot.title = element_blank(),
+  plot.subtitle = element_blank(),
   plot.tag = element_blank(),
   plot.caption = element_blank()
 ))

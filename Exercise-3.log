@@ -1,0 +1,284 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 2.9.7440 64-bit) (preloaded format=pdflatex 2020.7.18)  18 JUL 2020 23:55
+entering extended mode
+**./Exercise-3.tex
+(Exercise-3.tex
+LaTeX2e <2020-02-02> patch level 5
+L3 programming layer <2020-05-15>
+("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\article.cls"
+Document Class: article 2019/12/20 v1.4l Standard LaTeX document class
+("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\size10.clo"
+File: size10.clo 2019/12/20 v1.4l Standard LaTeX file (size option)
+)
+\c@part=\count167
+\c@section=\count168
+\c@subsection=\count169
+\c@subsubsection=\count170
+\c@paragraph=\count171
+\c@subparagraph=\count172
+\c@figure=\count173
+\c@table=\count174
+\abovecaptionskip=\skip47
+\belowcaptionskip=\skip48
+\bibindent=\dimen134
+)
+("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/latex/pdfpages\pdfpages.s
+ty"
+Package: pdfpages 2020/01/28 v0.5q Insert pages of external PDF documents (AM)
+ ("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/latex/base\ifthen.sty"
+Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
+) ("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/latex/tools\calc.sty"
+Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
+\calc@Acount=\count175
+\calc@Bcount=\count176
+\calc@Adimen=\dimen135
+\calc@Bdimen=\dimen136
+\calc@Askip=\skip49
+\calc@Bskip=\skip50
+LaTeX Info: Redefining \setlength on input line 80.
+LaTeX Info: Redefining \addtolength on input line 81.
+\calc@Ccount=\count177
+\calc@Cskip=\skip51
+) ("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/latex/eso-pic\eso-pic.s
+ty"
+Package: eso-pic 2018/04/12 v2.0h eso-pic (RN)
+
+("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/generic/atbegshi\atbegshi
+.sty"
+Package: atbegshi 2019/12/05 v1.19 At begin shipout hook (HO)
+
+("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/generic/infwarerr\infware
+rr.sty"
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/generic/ltxcmds\ltxcmds.s
+ty"
+Package: ltxcmds 2019/12/15 v1.24 LaTeX kernel commands for general use (HO)
+)
+("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/generic/iftex\iftex.sty"
+Package: iftex 2020/03/06 v1.0d TeX engine tests
+))
+("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\keyval.sty
+"
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks15
+) ("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/latex/xcolor\xcolor.sty
+"
+Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
+
+("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics-cfg\color.
+cfg"
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 225.
+
+("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics-def\pdftex
+.def"
+File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
+)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1352.
+Package xcolor Info: Model `RGB' extended on input line 1364.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1366.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1367.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
+))
+("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\graphicx.s
+ty"
+Package: graphicx 2019/11/30 v1.2a Enhanced LaTeX Graphics (DPC,SPQR)
+
+("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\graphics.s
+ty"
+Package: graphics 2019/11/30 v1.4a Standard LaTeX Graphics (DPC,SPQR)
+
+("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\trig.sty"
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+)
+("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics-cfg\graphi
+cs.cfg"
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 105.
+)
+\Gin@req@height=\dimen137
+\Gin@req@width=\dimen138
+)
+\AM@pagewidth=\dimen139
+\AM@pageheight=\dimen140
+
+("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/latex/pdfpages\pppdftex.d
+ef"
+File: pppdftex.def 2020/01/28 v0.5q Pdfpages driver for pdfTeX (AM)
+)
+\AM@pagebox=\box45
+\AM@global@opts=\toks16
+\AM@pagecnt=\count178
+\AM@toc@title=\toks17
+\c@AM@survey=\count179
+\AM@templatesizebox=\box46
+)
+("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/latex/l3backend\l3backend
+-pdfmode.def"
+File: l3backend-pdfmode.def 2020-05-05 L3 backend support: PDF mode
+\l__kernel_color_stack_int=\count180
+\l__pdf_internal_box=\box47
+) (Exercise-3.aux)
+\openout1 = `Exercise-3.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 9.
+LaTeX Font Info:    ... okay on input line 9.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 9.
+LaTeX Font Info:    ... okay on input line 9.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 9.
+LaTeX Font Info:    ... okay on input line 9.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 9.
+LaTeX Font Info:    ... okay on input line 9.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 9.
+LaTeX Font Info:    ... okay on input line 9.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 9.
+LaTeX Font Info:    ... okay on input line 9.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 9.
+LaTeX Font Info:    ... okay on input line 9.
+\AtBeginShipoutBox=\box48
+
+("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/context/base/mkii\supp-pd
+f.mkii"
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count181
+\scratchdimen=\dimen141
+\scratchbox=\box49
+\nofMPsegments=\count182
+\nofMParguments=\count183
+\everyMPshowfont=\toks18
+\MPscratchCnt=\count184
+\MPscratchDim=\dimen142
+\MPnumerator=\count185
+\makeMPintoPDFobject=\count186
+\everyMPtoPDFconversion=\toks19
+)
+("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/latex/epstopdf-pkg\epstop
+df-base.sty"
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+)
+("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/latex/pdflscape\pdflscape
+.sty"
+Package: pdflscape 2019/12/05 v0.12 Display of landscape pages in PDF (HO)
+
+("C:\Users\user\AppData\Local\Programs\MiKTeX 2.9\tex/latex/graphics\lscape.sty
+"
+Package: lscape 2000/10/22 v3.01 Landscape Pages (DPC)
+)
+Package pdflscape Info: Auto-detected driver: pdftex on input line 81.
+)
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 11.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 11.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 11.
+ [1
+
+{C:/Users/user/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
+<C:/rproject/EFRP/plot/unnamed-chunk-5-1.pdf, id=7, 722.7pt x 361.35pt>
+File: C:/rproject/EFRP/plot/unnamed-chunk-5-1.pdf Graphic file (type pdf)
+<use C:/rproject/EFRP/plot/unnamed-chunk-5-1.pdf>
+Package pdftex.def Info: C:/rproject/EFRP/plot/unnamed-chunk-5-1.pdf  used on i
+nput line 16.
+(pdftex.def)             Requested size: 345.0pt x 172.49767pt.
+<C:/rproject/EFRP/plot/unnamed-chunk-6-1.pdf, id=8, 722.7pt x 614.295pt>
+File: C:/rproject/EFRP/plot/unnamed-chunk-6-1.pdf Graphic file (type pdf)
+<use C:/rproject/EFRP/plot/unnamed-chunk-6-1.pdf>
+Package pdftex.def Info: C:/rproject/EFRP/plot/unnamed-chunk-6-1.pdf  used on i
+nput line 23.
+(pdftex.def)             Requested size: 345.0pt x 293.24602pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<C:/rproject/EFRP/plot/unnamed-chunk-8-1.pdf, id=9, 722.7pt x 361.35pt>
+File: C:/rproject/EFRP/plot/unnamed-chunk-8-1.pdf Graphic file (type pdf)
+<use C:/rproject/EFRP/plot/unnamed-chunk-8-1.pdf>
+Package pdftex.def Info: C:/rproject/EFRP/plot/unnamed-chunk-8-1.pdf  used on i
+nput line 30.
+(pdftex.def)             Requested size: 345.0pt x 172.49767pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<C:/rproject/EFRP/plot/unnamed-chunk-10-1.pdf, id=10, 722.7pt x 614.295pt>
+File: C:/rproject/EFRP/plot/unnamed-chunk-10-1.pdf Graphic file (type pdf)
+<use C:/rproject/EFRP/plot/unnamed-chunk-10-1.pdf>
+Package pdftex.def Info: C:/rproject/EFRP/plot/unnamed-chunk-10-1.pdf  used on 
+input line 37.
+(pdftex.def)             Requested size: 345.0pt x 293.24602pt.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 40.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 40.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<C:/rproject/EFRP/plot/unnamed-chunk-12-1.pdf, id=11, 722.7pt x 361.35pt>
+File: C:/rproject/EFRP/plot/unnamed-chunk-12-1.pdf Graphic file (type pdf)
+<use C:/rproject/EFRP/plot/unnamed-chunk-12-1.pdf>
+Package pdftex.def Info: C:/rproject/EFRP/plot/unnamed-chunk-12-1.pdf  used on 
+input line 45.
+(pdftex.def)             Requested size: 345.0pt x 172.49767pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<C:/rproject/EFRP/plot/unnamed-chunk-14-1.pdf, id=12, 722.7pt x 361.35pt>
+File: C:/rproject/EFRP/plot/unnamed-chunk-14-1.pdf Graphic file (type pdf)
+<use C:/rproject/EFRP/plot/unnamed-chunk-14-1.pdf>
+Package pdftex.def Info: C:/rproject/EFRP/plot/unnamed-chunk-14-1.pdf  used on 
+input line 53.
+(pdftex.def)             Requested size: 345.0pt x 172.49767pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<C:/rproject/EFRP/plot/unnamed-chunk-15-1.pdf, id=13, 722.7pt x 433.62pt>
+File: C:/rproject/EFRP/plot/unnamed-chunk-15-1.pdf Graphic file (type pdf)
+<use C:/rproject/EFRP/plot/unnamed-chunk-15-1.pdf>
+Package pdftex.def Info: C:/rproject/EFRP/plot/unnamed-chunk-15-1.pdf  used on 
+input line 61.
+(pdftex.def)             Requested size: 345.0pt x 206.9972pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<C:/rproject/EFRP/plot/unnamed-chunk-16-1.pdf, id=14, 722.7pt x 361.35pt>
+File: C:/rproject/EFRP/plot/unnamed-chunk-16-1.pdf Graphic file (type pdf)
+<use C:/rproject/EFRP/plot/unnamed-chunk-16-1.pdf>
+Package pdftex.def Info: C:/rproject/EFRP/plot/unnamed-chunk-16-1.pdf  used on 
+input line 69.
+(pdftex.def)             Requested size: 345.0pt x 172.49767pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[2 <C:/rproject/EFRP/plot/unnamed-chunk-5-1.pdf>] [3 <C:/rproject/EFRP/plot/unn
+amed-chunk-6-1.pdf> <C:/rproject/EFRP/plot/unnamed-chunk-8-1.pdf>] [4 <C:/rproj
+ect/EFRP/plot/unnamed-chunk-10-1.pdf>] [5 <C:/rproject/EFRP/plot/unnamed-chunk-
+12-1.pdf> <C:/rproject/EFRP/plot/unnamed-chunk-14-1.pdf>] [6 <C:/rproject/EFRP/
+plot/unnamed-chunk-15-1.pdf> <C:/rproject/EFRP/plot/unnamed-chunk-16-1.pdf>]
+(Exercise-3.aux) ) 
+Here is how much of TeX's memory you used:
+ 2747 strings out of 480799
+ 42917 string characters out of 2896251
+ 281731 words of memory out of 3000000
+ 18737 multiletter control sequences out of 15000+200000
+ 535373 words of font info for 34 fonts, out of 3000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 40i,7n,45p,270b,234s stack positions out of 5000i,500n,10000p,200000b,50000s
+<C:/Users/user/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/
+public/amsfonts/cm/cmmi10.pfb><C:/Users/user/AppData/Local/Programs/MiKTeX 2.9/
+fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/user/AppData/Local/Programs/
+MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/user/AppData/Loca
+l/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr17.pfb>
+Output written on Exercise-3.pdf (6 pages, 518616 bytes).
+PDF statistics:
+ 90 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 500000)
+ 41 words of extra memory for PDF output out of 10000 (max. 10000000)
+
