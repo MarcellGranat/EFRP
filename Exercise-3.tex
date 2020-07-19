@@ -26,8 +26,8 @@
 \section{Introduction}
 \setcounter{page}{1}
 
-This short paper is about an empirical analysis about cointegration using six stock prices (downloaded from Bloomberg) from 2003 December to 2019 June. Testing cointegration between stocks is a relevant technique to pairs trading, which is a widely used strategy. However pairs trading may be based on several pairs choosing rules, many papers concluded formerly, that cointegration leads to higher profitability on real-world data\cite{Huck.2014}.
-In this study I do not focus on this methods efficiency, only on the frequency of cointegrated stock prices. For this purpose I commit two different cointegration-test (Engel-Granger method and Johansen test) on the full time-interval, after I also use this methods with rolling windows. All the R codes of this paper are uploaded to my public GitHub repository (\href{https://github.com/MarcellGranat/EFRP/blob/master/Exercise-3.md}{https://github.com/MarcellGranat/EFRP}). 
+This short paper is about an empirical analysis about cointegration using six stock prices (downloaded from Bloomberg) from 2003 December to 2019 June. Testing cointegration between stocks is a relevant technique to pairs trading, which is a widely used strategy. However pairs trading may be based on several pairs choosing rules, many papers concluded earlier that cointegration leads to higher profitability on real-world data \cite{Huck.2014}.
+In this study I do not focus on the efficiency of these methods, only on the frequency of cointegrated stock prices. For this purpose I commit two different cointegration-test (Engel-Granger method and Johansen test) on the full time-interval, after I also use these methods with rolling windows. All the R codes of this paper are uploaded to my public GitHub repository (\href{https://github.com/MarcellGranat/EFRP/blob/master/Exercise-3.md}{https://github.com/MarcellGranat/EFRP}). 
 
 \section{Engle-Granger method}
 
@@ -52,7 +52,7 @@ The used stock prices are presented in figure \ref{fig1}. For a first glance the
 
 The second step is run OLS with all the possible pairs and check if there is a series of residuals stationer. Just as at the previous step the stationary test is augmented Dickey-Fuller test without constant or trend component in the auxiliary regression and $\alpha = 5\%$.
 
-With the described parameters \footnote{In my previously mentioned GitHub repository you may find that I wrote an R function to commit the whole Engle-Granger method with specified parameters. It would be reasonable to see the results with different stationary test or with different significance level (specially if calculating its profitability is also in focus). With the written function, it is possible to modify the test parameters and see how the results change.} the tests confirms only one cointegrated pair (see Figure \ref{fig4}), and that result holds only if the stock price of Bank of America is in regressor role, but is does not, when that is used as dependent variable\footnote{The matrix of the results is not a symmetrical.}.
+With the described parameters\footnote{In my previously mentioned GitHub repository you may find that I wrote an R function to commit the whole Engle-Granger method with specified parameters. It would be reasonable to see the results with different stationary test or with different significance level (specially if calculating its profitability is also in focus). With the written function, it is possible to modify the test parameters and see how the results change.} the tests confirms only one cointegrated pair (see Figure \ref{fig4}), and that result holds only if the stock price of Bank of America is in regressor role, but is does not, when that is used as dependent variable\footnote{The matrix of the results is not a symmetrical.}.
 
 \begin{figure}[ht]
   \centering
@@ -103,8 +103,7 @@ Looking at the distribution of the results controlling for the period of recessi
 
 \section{Conclusion}
 
-This short paper is an empirical analysis of cointegration tests performed on real-world stock prices. The results show that in many cases cointegration can be diagnosed on short periods (250 days), but not on the full time-interval. Using rolling window and controlling for the recession pattern that during recession cointegration is more frequent is suggested. This emerges further research question: Is the efficiency of pairs trading higher during recession\footnote{This one is an important connection point with the articles from Nelly 
-\cite{Neely.2014} and Huck \cite{Huck.2014}.}? As an additional further research idea I would say the efficiency of the pairs trading (Is there truly convergence where cointegration is ascertained?) and parameter optimization.
+This short paper is an empirical analysis of cointegration tests performed on real-world stock prices. The results show that in many cases cointegration can be diagnosed on short periods (250 days), but not on the full time-interval. Using rolling window and controlling for the recession pattern that during recession cointegration is more frequent is suggested. This emerges further research question: Is the efficiency of pairs trading higher during recession\footnote{This one is an important connection point with the articles from Nelly \cite{Neely.2014} and Huck \cite{Huck.2014}.}? As an additional further research idea I would say the efficiency of the pairs trading (Is there truly convergence where cointegration is ascertained?) and parameter optimization.
 
 %\begin{figure}[ht]
 %  \centering
