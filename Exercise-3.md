@@ -77,7 +77,7 @@ Bankdata %>% select(-1) %>% cor() %>% data.frame() %>% rownames_to_column() %>% 
       low = "#00A3AB", high = "#FF5B6B", space = "Lab", na.value = "grey50",
       guide = "legend", midpoint = 0, aesthetics = "fill", limits = c(-1,1)
     ) + labs(
-      x = "", y = "", title = "Correlation-matrix", tag = "Figure 2"
+      x = "", y = "", title = "Correlation-matrix", tag = "Not included"
     ) + theme(
 panel.border = element_blank()
 )
@@ -116,7 +116,7 @@ Bankdata %>%
   facet_wrap(vars(name), nrow = 3, scales = "free") +
   labs(
     title = "First difference of the time-series",
-    tag = "Figure 3", x = "Time", y = "Price difference"
+    tag = "Figure 2", x = "Time", y = "Price difference"
   )
 ```
 
@@ -152,7 +152,7 @@ cointegration_tests <- function(df, test, type, alpha) { # test cointegrity for 
         v[i] <- 1 # 1 ---> not cointegrated, but test is commitable
       }
     } else {
-      v[i] <- 0 # 0 ---> test is not commitable [I(0) OR not the same I() order OR series are the same]
+      v[i] <- 0 # 0 ---> test is not performable [I(0) OR not the same I() order OR series are the same]
     }
   }
   df2 %>%
@@ -171,11 +171,11 @@ cointegration_tests_results <- cointegration_tests(df = Bankdata, test = "adf", 
 cointegration_tests_results %>%
   mutate(
     cointegration = case_when(
-      cointegration == 0 ~ "Not commitable",
+      cointegration == 0 ~ "Not performable",
       cointegration == 1 ~ "Not cointegrated",
       cointegration == 2 ~ "Cointegrated"
     ),
-    cointegration = factor(cointegration, levels = c("Cointegrated", "Not cointegrated", "Not commitable"))
+    cointegration = factor(cointegration, levels = c("Cointegrated", "Not cointegrated", "Not performable"))
   ) %>%
   ggplot() +
   geom_tile(aes(x = x, y = y, fill = cointegration), color = "black") +
@@ -188,7 +188,7 @@ cointegration_tests_results %>%
     x = "Independent variable in the OLS",
     title = "Results of Engle-Granger method",
     caption = "Calculations are based on ADF-test (level, alpha = 5%)",
-    tag = "Figure 4"
+    tag = "Figure 3"
   ) + theme(
   panel.border = element_blank()
 )
@@ -283,15 +283,15 @@ cointegration_tests_rw %>%
   ggplot(aes(x = t, y = cointegration)) +
   geom_point() +
   facet_grid(cols = vars(x), rows = vars(y)) +
-  scale_y_continuous(breaks = c(0, 1, 2), labels = c("Not commitable", "Not cointegrated", "Cointegrated")) +
+  scale_y_continuous(breaks = c(0, 1, 2), labels = c("Not performable", "Not cointegrated", "Cointegrated")) +
   labs(
-    title = "Results of Engle-Granger method with rolling window",
-    subtitle = "Size of windows = 250",
+    title = "Results of Engle-Granger method with rolling window per pairing",
+    subtitle = "Size of window = 250",
     y = "Result of the test",
     x = "# window",
     caption = "Calculations are based on ADF-test (level, alpha = 5%)\n
     Depedent variables (in the OLS) are placed horizontal, independents are vertical.",
-    tag = "Figure 5"
+    tag = "Not included"
   )
 ```
 
@@ -331,11 +331,11 @@ merge(expand.grid(1:(nrow(Bankdata) - 249), c(0, 1, 2)) %>% rename_all(funs(c("t
   mutate(
     n = ifelse(is.na(n), 0, n),
     cointegration = case_when(
-      cointegration == 0 ~ "Not commitable",
+      cointegration == 0 ~ "Not performable",
       cointegration == 1 ~ "Not cointegrated",
       cointegration == 2 ~ "Cointegrated"
     ),
-    cointegration = factor(cointegration, levels = c("Cointegrated", "Not cointegrated", "Not commitable")),
+    cointegration = factor(cointegration, levels = c("Cointegrated", "Not cointegrated", "Not performable")),
     t = as.Date(Bankdata$Date)[t + 125]
   ) %>%
   ggplot() +
@@ -346,20 +346,20 @@ merge(expand.grid(1:(nrow(Bankdata) - 249), c(0, 1, 2)) %>% rename_all(funs(c("t
     legend.position = "bottom"
   ) +
   labs(
-    title = "Summary results of Engle-Granger method with rolling window",
-    subtitle = "Size of windows = 250",
-    y = "# pairs with the result",
+    title = "Results of Engle-Granger method with rolling window",
+    subtitle = "Size of window = 250",
+    y = "Number of pairings with the result",
     x = "Time (middle of the window)",
     caption = "Calculations are based on ADF-test (level, alpha = 5%).\n
-    # total pairs are 6.",
-    tag = "Figure 6"
+    Number of total pairings pairs are 6.",
+    tag = "Figure 4"
   ) +
   scale_fill_grey()
 ```
 
 <img src="plot/unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
 
-## IV. Johansen-test with rolling window
+## IV. Johansen test with rolling window
 
 ``` r
 johansen_tests_rw <- data.frame(t = 1:(nrow(Bankdata) - 249)) %>% mutate(
@@ -414,12 +414,12 @@ for (i in 1:(nrow(Bankdata) - 249)) {
   scale_x_date(expand = c(0, 0), date_breaks = "1 year", date_labels = "%Y") +
   labs(
     title = "Results of Johansen-test with rolling window across time",
-    subtitle = "Size of windows = 250",
+    subtitle = "Size of window = 250",
     y = "# cointegrated vectors",
     x = "Time (middle of the window)",
     caption = "Points are jittered around their true y value for better visualisation (the number of cointegrated vectors is interger).\n
     Date of recession is from the National Bureau of Economic Research (https://www.nber.org/cycles.html).",
-    tag = "Figure 7"
+    tag = "Figure 5"
   ) +
   theme(
     panel.grid.minor.y = element_blank()
@@ -448,12 +448,12 @@ johansen_tests_rw %>%
   scale_y_continuous(labels = scales::percent_format(accuracy = 1), expand = c(0, 0), breaks = seq(from = 0, to = 1, by = .1)) +
   scale_fill_grey() +
   labs(
-    title = "Distribuiton of the Johansen-test results with rolling window",
+    title = "Distribution of the Johansen-test results with rolling window",
     x = "Alpha",
     y = "Proportion",
-    fill = "# cointegrated vectors",
-    subtitle = "Size of windows = 250",
-    tag = "Figure 8"
+    fill = "Number cointegrated vectors (r)",
+    subtitle = "Size of window = 250",
+    tag = "Not included"
   ) +
   theme(
     legend.title = element_text(),
