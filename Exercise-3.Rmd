@@ -247,7 +247,7 @@ cointegration_tests_rw %>%
     y = "Result of the test",
     x = "# window",
     caption = "Calculations are based on ADF-test (level, alpha = 5%)\n
-    Depedent variables (in the OLS) are placed horizontal, independents are vertical.",
+    Dependent variables (in the OLS) are placed horizontal, independents are vertical.",
     tag = "Not included"
   )
 ```
