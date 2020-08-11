@@ -18,7 +18,7 @@ The authors suggest to use PCI in other economic contexts as a possible further 
 
 - Securities splitted into sectors defined by [Global Industry Classification Standard](https://www.msci.com/gics)
 
-  # Are pairs trading profits robust to trading costs? (Do, 2012)
+# Are pairs trading profits robust to trading costs? (Do, 2012)
 
-  Authors examine the impact of trading costs on pairs trading profitability. These cost are: **commissions, market impact, short selling fees**. After contorlling for these, pairs trading remains profitable.
+Authors examine the impact of trading costs on pairs trading profitability. These cost are: **commissions, market impact, short selling fees**. After contorlling for these, pairs trading remains profitable.
 
