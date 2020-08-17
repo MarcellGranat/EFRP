@@ -1,13 +1,10 @@
 Pairs Trading Literature
 
-[TOC]
-
 # Ideas :bulb:
 
 - currency trading
 - controlling for sample size :arrow_right: focusing on short term
   - different method
-  - 
 
 # Pairs trading with partial cointegration (Clegg, 2017)
 
@@ -32,5 +29,3 @@ The authors suggest to use PCI in other economic contexts as a possible further 
 # Are pairs trading profits robust to trading costs? (Do, 2012)
 
 Authors examine the impact of trading costs on pairs trading profitability. These cost are: **commissions, market impact, short selling fees**. After controlling for these, pairs trading remains profitable.
-
-![](plot\zoja.gif)
